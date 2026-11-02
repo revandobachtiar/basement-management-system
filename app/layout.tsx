@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/Layout/appSidebar";
+import { SiteHeader } from "@/components/Layout/topHeader";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
+  subsets: ["latin"],
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,9 +30,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plusJakartaSans.variable}  h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-screen font-sans bg-background text-foreground antialiased selection:bg-blue-600 selection:text-white">
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset className="bg-background">
+            <SiteHeader />
+            {children}
+          </SidebarInset>
+        </SidebarProvider>
+      </body>
     </html>
   );
 }
