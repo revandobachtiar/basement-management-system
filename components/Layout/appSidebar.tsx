@@ -101,6 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   width={120}
                   height={40}
                   priority
+                  className="w-[120px] h-auto object-contain"
                 />
               </div>
               
