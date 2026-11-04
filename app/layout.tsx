@@ -12,6 +12,7 @@ import {
 
 import { AppSidebar } from "@/components/Layout/appSidebar";
 import { SiteHeader } from "@/components/Layout/topHeader";
+import { ParkingDataProvider } from "@/contexts/parkingDataContext";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -33,17 +34,19 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        <SidebarProvider>
-          <AppSidebar />
+        <ParkingDataProvider>
+          <SidebarProvider>
+            <AppSidebar />
 
-          <SidebarInset className="min-w-0 bg-background">
-            <SiteHeader />
+            <SidebarInset className="min-w-0 bg-background">
+              <SiteHeader />
 
-            <main className="flex-1">
-              {children}
-            </main>
-          </SidebarInset>
-        </SidebarProvider>
+              <main className="flex-1">
+                {children}
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
+        </ParkingDataProvider>
       </body>
     </html>
   );

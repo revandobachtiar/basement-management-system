@@ -1,39 +1,54 @@
 
+"use client";
+
 import {
   Card,
   CardContent,
-  CardHeader,
   CardDescription,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
 import {
   CarFront,
   CircleParking,
   CheckCircle2,
-} from "lucide-react"
+} from "lucide-react";
 
-interface KipSummaryCardProps {
-  totalCapacity?: number
-  occupied?: number
-  available?: number
-}
+import { useMemo } from "react";
+import { useBasement } from "@/hooks/useBasement";
 
-export function KipSummaryCard({
-  totalCapacity = 500,
-  occupied = 326,
-  available = 174,
-}: KipSummaryCardProps) {
-  const occupancyRate =
-    totalCapacity > 0
-      ? (occupied / totalCapacity) * 100
-      : 0
+export function KipSummaryCard() {
+  const { basements } = useBasement();
 
-  const percentage = Math.min(100, occupancyRate)
+  const summary = useMemo(() => {
+    const totalCapacity = basements.reduce(
+      (total, item) => total + item.capacity,
+      0
+    );
+
+    const occupied = basements.reduce(
+      (total, item) => total + item.currentCount,
+      0
+    );
+
+    return {
+      totalCapacity,
+      occupied,
+      available: totalCapacity - occupied,
+    };
+  }, [basements]);
+
+  const percentage =
+    summary.totalCapacity > 0
+      ? Math.min(
+          100,
+          (summary.occupied / summary.totalCapacity) * 100
+        )
+      : 0;
 
   const cards = [
     {
       title: "Total Kapasitas",
-      value: totalCapacity,
+      value: summary.totalCapacity,
       description: "Slot Parkir",
       icon: CircleParking,
       iconColor: "text-blue-600",
@@ -41,7 +56,7 @@ export function KipSummaryCard({
     },
     {
       title: "Terisi",
-      value: occupied,
+      value: summary.occupied,
       description: "Kendaraan",
       icon: CarFront,
       iconColor: "text-orange-500",
@@ -49,18 +64,18 @@ export function KipSummaryCard({
     },
     {
       title: "Tersedia",
-      value: available,
+      value: summary.available,
       description: "Slot Kosong",
       icon: CheckCircle2,
       iconColor: "text-emerald-600",
       iconBg: "bg-emerald-100",
     },
-  ]
+  ];
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((item) => {
-        const Icon = item.icon
+        const Icon = item.icon;
 
         return (
           <Card
@@ -89,10 +104,9 @@ export function KipSummaryCard({
               </div>
             </CardContent>
           </Card>
-        )
+        );
       })}
 
-      {/* Occupancy Donut */}
       <Card className="border-slate-200 bg-white shadow-sm">
         <CardContent className="flex h-full items-center gap-5 p-5">
           <div
@@ -121,11 +135,11 @@ export function KipSummaryCard({
             </div>
 
             <p className="mt-2 text-xs text-slate-400">
-              {occupied} dari {totalCapacity} slot terisi
+              {summary.occupied} dari {summary.totalCapacity} slot terisi
             </p>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

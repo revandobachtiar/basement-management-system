@@ -1,117 +1,64 @@
+
 "use client"
 
 import * as React from "react"
-import {NavMain} from "@/components/nav-main"
-import {NavSecondary} from "@/components/nav-secondary"
-import Image from 'next/image';
-
+import Image from "next/image"
+import { usePathname } from "next/navigation"
+import { NavMain } from "@/components/nav-main"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, LifeBuoyIcon, SendIcon, FrameIcon, PieChartIcon, MapIcon, TerminalIcon } from "lucide-react"
+import { LayoutDashboard, Settings } from "lucide-react"
 
-const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: (
-        <TerminalSquareIcon
-        />
-      ),
-      isActive: true,
+export function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
 
-    },
-    
-    {
-      title: "Settings",
-      url: "#",
-      icon: (
-        <Settings2Icon
-        />
-      ),
-      
-    },
-  ],
-  // navSecondary: [
-  //   {
-  //     title: "Support",
-  //     url: "#",
-  //     icon: (
-  //       <LifeBuoyIcon
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     title: "Feedback",
-  //     url: "#",
-  //     icon: (
-  //       <SendIcon
-  //       />
-  //     ),
-  //   },
-  // ],
-  // projects: [
-  //   {
-  //     name: "Design Engineering",
-  //     url: "#",
-  //     icon: (
-  //       <FrameIcon
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     name: "Sales & Marketing",
-  //     url: "#",
-  //     icon: (
-  //       <PieChartIcon
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     name: "Travel",
-  //     url: "#",
-  //     icon: (
-  //       <MapIcon
-  //       />
-  //     ),
-  //   },
-  // ],
-}
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const data = {
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: <LayoutDashboard />,
+        isActive: pathname === "/dashboard",
+      },
+      {
+        title: "Settings",
+        url: "/settings",
+        icon: <Settings />,
+        isActive: pathname === "/settings",
+      },
+    ],
+  }
+
   return (
     <Sidebar variant="sidebar" collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton 
-            size="xl" 
-            render={<a href="#" />}  
-            >
-              <div className="flex items-center justify-center w-full">
+            <SidebarMenuButton size="xl" render={<a href="/" />}>
+              <div className="flex w-full items-center justify-center">
                 <Image
                   src="/image/Trans_Studio_Mall.png"
                   alt="Logo Trans Studio Mall"
                   width={120}
                   height={40}
                   priority
-                  className="w-[120px] h-auto object-contain"
+                  className="h-auto w-[120px] object-contain"
                 />
               </div>
-              
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent
-      className="mt-16"
-      >
+
+      <SidebarContent className="mt-16">
         <NavMain items={data.navMain} />
       </SidebarContent>
     </Sidebar>
