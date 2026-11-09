@@ -1,6 +1,8 @@
 
 export type StreamType = "HLS" | "MJPEG" | "MP4";
 
+// Camera
+
 export type Camera = {
   id: string;
   name: string;
@@ -12,27 +14,36 @@ export type Camera = {
   isActive: boolean;
 };
 
+// Basement
+
 export type Basement = {
   id: string;
   name: string;
   capacity: number;
   currentCount: number;
+  available: number;
+  isFull: boolean;
+  updatedAt: string;
 };
+
+// Line
 
 export type Line = {
   id: string;
   name: string;
-  direction: "both";
-  isActive?: boolean;
+  direction: "in" | "out" | "both";
+  isActive: boolean;
 };
+
+// Line IN/OUT Basement
 
 export type LineInOut = {
   id: string;
-  name: string;
   lineId: string;
-  inToBasementId: string;
-  outToBasementId: string;
+  inToBasementId: string | null;
+  outToBasementId: string | null;
 };
+
 
 export type ParkingContext = {
   id: string;
@@ -41,26 +52,30 @@ export type ParkingContext = {
   apply: "INCREASE" | "REDUCE";
 };
 
+// Basement Count Update
 export type basementCountUpdate = {
   basementId: string;
   count: number;
 };
 
-// Input Types
+// INPUT TYPES
+
 
 export type AddCameraInput = Omit<Camera, "id">;
 
-export type AddBasementInput = Omit<
+export type AddBasementInput = Pick<
   Basement,
-  "id" | "currentCount"
+  "name" | "capacity"
 >;
 
 export type AddLineInput = Omit<Line, "id">;
 
-export type AddLineInOutInput = Omit<LineInOut, "id">;
+export type AddLineInOutInput = {
+  lineId: string;
+  inToBasementId: string;
+  outToBasementId: string;
+};
 
 export type AddContextInput = Omit<ParkingContext, "id">;
 
-export type UpdateBasementCountInput = Omit<basementCountUpdate, "basementId"> & {
-  basementId: string;
-};
+export type UpdateBasementCountInput = basementCountUpdate;

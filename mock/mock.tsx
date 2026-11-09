@@ -24,6 +24,12 @@ export const mockBasements: Basement[] = [
     capacity: 2000,
     currentCount: 124,
   },
+  {
+    id: "basement-p3",
+    name: "P3",
+    capacity: 1000,
+    currentCount: 50,
+  },
 ];
 
 // ==========================================
