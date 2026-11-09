@@ -19,6 +19,8 @@ export const API_ENDPOINTS = {
   LINE_IN_OUT_BASEMENT: {
     GET: `${API_BASE_URL}/line-in-out-basement`,
     POST: `${API_BASE_URL}/line-in-out-basement`,
+    GET_BY_ID: (id: string) =>
+    `${API_BASE_URL}/line-in-out-basement/${id}`,
     PUT: (id: string) =>
       `${API_BASE_URL}/line-in-out-basement/${id}`,
     DELETE: (id: string) =>

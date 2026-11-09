@@ -1,4 +1,6 @@
-import type { LineInOut } from "@/types/parking";
+import type { LineInOut, Basement } from "@/types/parking";
+
+type BasementReference = Pick<Basement, "id" | "name">;
 
 type BackendLineInOut = {
   id: string;
@@ -12,7 +14,6 @@ function extractLineInOutArray(
 ): BackendLineInOut[] {
   let payload = response;
 
-  // Mendukung respons berupa array langsung atau { data: [...] }
   if (
     typeof payload === "object" &&
     payload !== null &&
@@ -23,25 +24,34 @@ function extractLineInOutArray(
   }
 
   if (!Array.isArray(payload)) {
-    throw new Error("Format response Line IN/OUT Basement tidak valid.");
+    throw new Error(
+      "Format response Line IN/OUT Basement tidak valid."
+    );
   }
 
   return payload as BackendLineInOut[];
 }
 
 export function transformLineInOut(
-  response: unknown
+  response: unknown,
+  basements: BasementReference[]
 ): LineInOut[] {
   const configurations = extractLineInOutArray(response);
 
-  return configurations.map((item) => ({
-    id: String(item.id),
-    lineId: String(item.lineId),
-    inToBasementId: item.inToBasement
-      ? String(item.inToBasement)
-      : null,
-    outToBasementId: item.outToBasement
-      ? String(item.outToBasement)
-      : null,
-  }));
+  return configurations.map((item) => {
+    const inBasement = basements.find(
+      (basement) => basement.name === item.inToBasement
+    );
+
+    const outBasement = basements.find(
+      (basement) => basement.name === item.outToBasement
+    );
+
+    return {
+      id: String(item.id),
+      lineId: String(item.lineId),
+      inToBasementId: inBasement?.id ?? null,
+      outToBasementId: outBasement?.id ?? null,
+    };
+  });
 }

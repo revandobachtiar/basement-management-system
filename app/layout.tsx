@@ -12,7 +12,7 @@ import {
 
 import { AppSidebar } from "@/components/Layout/appSidebar";
 import { SiteHeader } from "@/components/Layout/topHeader";
-import { ParkingDataProvider } from "@/contexts/parkingDataContext";
+
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -22,7 +22,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "Parking Management System",
-  description: "Parking Management System - Trans Studio Mall Bandung",
+  description:
+    "Parking Management System - Trans Studio Mall Bandung",
 };
 
 export default function RootLayout({
@@ -34,7 +35,7 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        <ParkingDataProvider>
+      
           <SidebarProvider>
             <AppSidebar />
 
@@ -46,7 +47,7 @@ export default function RootLayout({
               </main>
             </SidebarInset>
           </SidebarProvider>
-        </ParkingDataProvider>
+        
       </body>
     </html>
   );

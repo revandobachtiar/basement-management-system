@@ -1,20 +1,60 @@
 
 "use client";
 
-import { useParkingData } from "@/hooks/useParkingData";
+import useSWR from "swr";
+import { useCallback } from "react";
+
+import { basementService } from "@/lib/services/basement.service";
 import type { AddBasementInput } from "@/types/parking";
+
+const BASEMENT_KEY = "/basement";
 
 export function useBasement() {
   const {
-    data: { basements },
-    addBasement,
-    updateBasementCount,
-  } = useParkingData();
+    data: basements = [],
+    error,
+    isLoading,
+    mutate,
+  } = useSWR("/basement", () => basementService.getAll(), {
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+    shouldRetryOnError: true,
+    errorRetryCount: 3,
+    dedupingInterval: 2000,
+  });
+
+  const addBasement = useCallback(
+    async (input: AddBasementInput) => {
+      const result = await basementService.create(input);
+      await mutate();
+      return result;
+    },
+    [mutate]
+  );
+
+  const updateBasement = useCallback(
+    async (
+      id: string,
+      input: AddBasementInput
+    ) => {
+      const result = await basementService.update(id, input);
+      await mutate();
+      return result;
+    },
+    [mutate]
+  );
+
+  const refreshBasements = useCallback(
+    () => mutate(),
+    [mutate]
+  );
 
   return {
     basements,
-    addBasement: (basement: AddBasementInput) =>
-      addBasement(basement),
-    updateBasementCount,
+    error,
+    isLoading,
+    addBasement,
+    updateBasement,
+    refreshBasements,
   };
 }
