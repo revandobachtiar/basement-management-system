@@ -39,6 +39,7 @@ export type Line = {
 
 export type LineInOut = {
   id: string;
+  name: string;
   lineId: string;
   inToBasementId: string | null;
   outToBasementId: string | null;
@@ -71,6 +72,7 @@ export type AddBasementInput = Pick<
 export type AddLineInput = Omit<Line, "id">;
 
 export type AddLineInOutInput = {
+  name: string;
   lineId: string;
   inToBasementId: string;
   outToBasementId: string;

@@ -19,7 +19,23 @@ const basementColors = [
 ];
 
 export function BasementStatusRow() {
-  const { basements } = useBasement();
+  const {
+    basements,
+    isLoading,
+    error,
+  } = useBasement();
+
+  if (isLoading) {
+    return <p className="text-sm text-slate-500">Memuat status Basement...</p>;
+  }
+
+  if (error) {
+    return <p className="text-sm text-red-600">Gagal memuat status Basement.</p>;
+  }
+
+  if (basements.length === 0) {
+    return <p className="text-sm text-slate-500">Belum ada Basement terdaftar.</p>;
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -45,7 +61,7 @@ export function BasementStatusRow() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-2">
                 <CardTitle className="text-base font-bold text-slate-800">
-                  Basement {basement.name}
+                  {basement.name}
                 </CardTitle>
 
                 <span className="text-xs font-medium text-slate-500">

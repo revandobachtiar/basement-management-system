@@ -13,29 +13,46 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-import { useMemo } from "react";
 import { useBasement } from "@/hooks/useBasement";
 
 export function KipSummaryCard() {
-  const { basements } = useBasement();
+  const {
+    basements,
+    isLoading,
+    error,
+  } = useBasement();
 
-  const summary = useMemo(() => {
-    const totalCapacity = basements.reduce(
-      (total, item) => total + item.capacity,
-      0
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border bg-white p-6 text-sm text-slate-500">
+        Memuat ringkasan parkir...
+      </div>
     );
+  }
 
-    const occupied = basements.reduce(
-      (total, item) => total + item.currentCount,
-      0
+  if (error) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-600">
+        Gagal mengambil data Basement: {error.message}
+      </div>
     );
+  }
 
-    return {
-      totalCapacity,
-      occupied,
-      available: totalCapacity - occupied,
-    };
-  }, [basements]);
+  const totalCapacity = basements.reduce(
+    (total, item) => total + item.capacity,
+    0
+  );
+
+  const occupied = basements.reduce(
+    (total, item) => total + item.currentCount,
+    0
+  );
+
+  const summary = {
+    totalCapacity,
+    occupied,
+    available: totalCapacity - occupied,
+  };
 
   const percentage =
     summary.totalCapacity > 0

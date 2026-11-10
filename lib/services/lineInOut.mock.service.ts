@@ -12,6 +12,7 @@ import type {
 function toFrontendModel(item: (typeof mockLineInOuts)[number]): LineInOut {
   return {
     id: item.id,
+    name: item.name,
     lineId: item.lineId,
     inToBasementId: mockBasements.find(
       (basement) => basement.name === item.inToBasement
@@ -23,14 +24,18 @@ function toFrontendModel(item: (typeof mockLineInOuts)[number]): LineInOut {
 }
 
 function toMockModel(input: AddLineInOutInput) {
+  const inBasement = mockBasements.find(
+    (basement) => basement.id === input.inToBasementId
+  );
+  const outBasement = mockBasements.find(
+    (basement) => basement.id === input.outToBasementId
+  );
+
   return {
+    name: input.name,
     lineId: input.lineId,
-    inToBasement: mockBasements.find(
-      (basement) => basement.id === input.inToBasementId
-    )?.name,
-    outToBasement: mockBasements.find(
-      (basement) => basement.id === input.outToBasementId
-    )?.name,
+    inToBasement: inBasement?.name,
+    outToBasement: outBasement?.name,
   };
 }
 

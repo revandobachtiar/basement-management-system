@@ -47,8 +47,13 @@ export function transformLineInOut(
       (basement) => basement.name === item.outToBasement
     );
 
+    const inName = inBasement?.name ?? "—";
+    const outName = outBasement?.name ?? "—";
+    const name = `Line ${item.lineId} – ${inName} ${inBasement && outBasement ? "↔" : "→"} ${outName}`;
+
     return {
       id: String(item.id),
+      name,
       lineId: String(item.lineId),
       inToBasementId: inBasement?.id ?? null,
       outToBasementId: outBasement?.id ?? null,

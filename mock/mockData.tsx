@@ -1,17 +1,5 @@
 
-/**
- * Dummy data untuk pengujian integrasi frontend dengan backend.
- *
- * Basement, Line, dan Line IN/OUT mengikuti struktur
- * response API backend NestJS.
- *
- * Camera dan Parking Context masih berupa mock frontend
- * karena endpoint backend belum tersedia.
- */
 
-// =====================================================
-// BACKEND DTO
-// =====================================================
 
 export type BasementResponse = {
   id: string;
@@ -39,6 +27,7 @@ export type LineResponse = {
 
 export type LineInOutResponse = {
   id: string;
+  name: string;
   lineId: string;
   inToBasement?: string;
   outToBasement?: string;
@@ -51,10 +40,6 @@ export type CreateLineInOutResponse = {
   outToBasementId?: string;
 };
 
-// =====================================================
-// BASEMENT
-// GET /basement
-// =====================================================
 
 export const mockBasements: BasementResponse[] = [
   {
@@ -86,10 +71,6 @@ export const mockBasements: BasementResponse[] = [
   },
 ];
 
-// =====================================================
-// LINE
-// GET /line
-// =====================================================
 
 export const mockLines: LineResponse[] = [
   {
@@ -130,56 +111,50 @@ export const mockLines: LineResponse[] = [
   },
 ];
 
-// =====================================================
-// LINE IN/OUT BASEMENT
-// GET /line-in-out-basement
-//
-// Catatan:
-// Backend GET mengirim nama Basement pada field
-// inToBasement dan outToBasement, bukan ID.
-// =====================================================
 
 export const mockLineInOuts: LineInOutResponse[] = [
   {
     id: "mapping-1",
+    name: "Line 1 – Basement P1 ↔ Basement P1",
     lineId: "line-1",
     inToBasement: "Basement P1",
     outToBasement: "Basement P1",
   },
   {
     id: "mapping-2",
+    name: "Line 2 – Basement P2 ↔ Basement P2",
     lineId: "line-2",
     inToBasement: "Basement P2",
     outToBasement: "Basement P2",
   },
   {
     id: "mapping-3",
+    name: "Line 3 – Basement P2 → Basement P1",
     lineId: "line-3",
     inToBasement: "Basement P2",
     outToBasement: "Basement P1",
   },
   {
     id: "mapping-4",
+    name: "Line 4 – Basement P3 ↔ Basement P3",
     lineId: "line-4",
     inToBasement: "Basement P3",
     outToBasement: "Basement P3",
   },
   {
     id: "mapping-5",
+    name: "Line 5 – Basement P1 →",
     lineId: "line-5",
     inToBasement: "Basement P1",
   },
   {
     id: "mapping-6",
+    name: "Line 6 – → Basement P2",
     lineId: "line-6",
     outToBasement: "Basement P2",
   },
 ];
 
-// =====================================================
-// CONTOH RESPONSE POST
-// POST /basement
-// =====================================================
 
 export const mockCreateBasementResponse: CreateBasementResponse = {
   id: "basement-p4",
@@ -188,10 +163,6 @@ export const mockCreateBasementResponse: CreateBasementResponse = {
   currentCount: 0,
 };
 
-// =====================================================
-// CONTOH RESPONSE POST
-// POST /line-in-out-basement
-// =====================================================
 
 export const mockCreateLineInOutResponse: CreateLineInOutResponse = {
   id: "mapping-7",
@@ -200,10 +171,7 @@ export const mockCreateLineInOutResponse: CreateLineInOutResponse = {
   outToBasementId: "basement-p1",
 };
 
-// =====================================================
-// FRONTEND-ONLY MOCK
-// Belum tersedia endpoint di backend
-// =====================================================
+
 
 export type CameraMock = {
   id: string;
@@ -279,10 +247,7 @@ export const mockCameras: CameraMock[] = [
   },
 ];
 
-// =====================================================
-// PARKING CONTEXT
-// Frontend-only mock
-// =====================================================
+
 
 export type ParkingContextMock = {
   id: string;

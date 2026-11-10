@@ -60,3 +60,33 @@ export function updateBasementMock(
 
   return { ...updated } as Basement;
 }
+export function updateBasementCountMock(
+  id: string,
+  count: number
+): Basement {
+  const index = mockBasements.findIndex(
+    (item) => item.id === id
+  );
+
+  if (index === -1) {
+    throw new Error("Basement tidak ditemukan");
+  }
+
+  const current = mockBasements[index];
+
+  if (count < 0 || count > current.capacity) {
+    throw new Error("Jumlah kendaraan melebihi kapasitas Basement");
+  }
+
+  const updated = {
+    ...current,
+    currentCount: count,
+    available: current.capacity - count,
+    isFull: count >= current.capacity,
+    updatedAt: new Date().toISOString(),
+  };
+
+  mockBasements[index] = updated;
+
+  return { ...updated } as Basement;
+}

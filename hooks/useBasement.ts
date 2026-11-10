@@ -6,6 +6,7 @@ import { useCallback } from "react";
 
 import { basementService } from "@/lib/services/basement.service";
 import type { AddBasementInput } from "@/types/parking";
+import { updateBasementMock } from "@/lib/services/basement.mock.service";
 
 const BASEMENT_KEY = "/basement";
 
@@ -27,6 +28,19 @@ export function useBasement() {
     async (input: AddBasementInput) => {
       const result = await basementService.create(input);
       await mutate();
+      return result;
+    },
+    [mutate]
+  );
+  const updateBasementCount = useCallback(
+    async (id: string, count: number) => {
+      const result = await basementService.updateCurrentCount(
+        id,
+        count
+      );
+
+      await mutate();
+
       return result;
     },
     [mutate]
@@ -54,6 +68,7 @@ export function useBasement() {
     error,
     isLoading,
     addBasement,
+    updateBasementCount,
     updateBasement,
     refreshBasements,
   };

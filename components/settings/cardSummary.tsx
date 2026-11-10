@@ -1,68 +1,85 @@
-'use client'
+"use client";
 
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
-import { BuildingComplex, Video, Road } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
 
-interface CardSummaryProps {
-    title: string
-    basementTotal: number
-    lineTotal: number
-    cctvTotal: number
-}
+import {
+  Building2,
+  Video,
+  Route,
+} from "lucide-react";
 
-export function CardSummary({
-    basementTotal = 6,
-    lineTotal = 12,
-    cctvTotal = 6,
-}) {
-    const cards = [
-        {
-            title: "Total Basement",
-            value: basementTotal,
-            icon: BuildingComplex,
-            iconColor: "black",
-            
-        },
-        {
-            title: "Total Line",
-            value: lineTotal,
-            icon: Road,
-            iconColor: "black",
-        },
-        {
-            title: "Total CCTV",
-            value: cctvTotal,
-            icon: Video,
-            iconColor: "black",
-        }
-    ];
+import { useBasement } from "@/hooks/useBasement";
+import { useLine } from "@/hooks/useLine";
+import { useCamera } from "@/hooks/useCamera";
 
-    return (
-        <div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mx-20 mt-10">
-                {cards.map((card, index) => (
-                    <Card key={index} className="bg-transparent border-none shadow-none ring-0 outline-0">
-                        <CardContent>
-                            <div className="place-items-center grid-rows-6 gap-2">
-                                <card.icon className={`h-20 w-20 place-items-center ${card.iconColor}`} />
-                                <CardTitle className = "text-3xl font-bold text-[#010634]">{card.value}</CardTitle>
-                            </div>
-                        </CardContent>
-                        <CardHeader className="place-items-center">
-                            <CardDescription className = "text-lg font-semibold text-[#010634]">{card.title}</CardDescription>
-                        </CardHeader>
-                        
-                    </Card>
-                ))}
-            </div>
-            {/* <div className = "grid grid-cols-1 lg:grid-cols-1 mx-10 mt-5">
-                <Card className = "bg-white border-none shadow-none ring-0 outline-0">
-                    <CardHeader>
-                        <CardTitle className = "text-xl font-bold">Configuration Menu</CardTitle>
-                    </CardHeader>
-                    
-                </Card>
-            </div> */}
-        </div>
-    );
+export function CardSummary() {
+  const {
+    basements,
+    isLoading: basementLoading,
+  } = useBasement();
+
+  const {
+    lines,
+    isLoading: lineLoading,
+  } = useLine();
+
+  const {
+    cameras,
+    isLoading: cameraLoading,
+  } = useCamera();
+
+  const isLoading =
+    basementLoading || lineLoading || cameraLoading;
+
+  const cards = [
+    {
+      title: "Total Basement",
+      value: basements.length,
+      icon: Building2,
+    },
+    {
+      title: "Total Line",
+      value: lines.length,
+      icon: Route,
+    },
+    {
+      title: "Total CCTV",
+      value: cameras.length,
+      icon: Video,
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 gap-4 px-6 pt-8 lg:grid-cols-3 lg:px-20">
+      {cards.map((card) => {
+        const Icon = card.icon;
+
+        return (
+          <Card
+            key={card.title}
+            className="border-slate-200 bg-white shadow-sm"
+          >
+            <CardContent className="flex flex-col items-center gap-3 p-6">
+              <Icon className="size-14 text-[#202653]" />
+
+              <CardTitle className="text-3xl font-bold text-[#010634]">
+                {isLoading
+                  ? "..."
+                  : card.value.toLocaleString("id-ID")}
+              </CardTitle>
+
+              <CardDescription className="text-base font-semibold text-[#010634]">
+                {card.title}
+              </CardDescription>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
 }

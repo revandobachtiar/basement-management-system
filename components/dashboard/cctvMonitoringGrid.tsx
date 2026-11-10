@@ -6,9 +6,39 @@ import { useBasement } from "@/hooks/useBasement";
 import StreamPreview from "@/components/dashboard/streamPreview";
 
 export function CctvMonitoringGrid() {
-  const { cameras } = useCamera();
+  const {
+    cameras,
+    isLoading: cameraLoading,
+    error: cameraError,
+  } = useCamera();
+
   const { lines } = useLine();
   const { basements } = useBasement();
+
+  if (cameraLoading) {
+    return (
+      <p className="p-4 text-sm text-slate-500">
+        Memuat kamera CCTV...
+      </p>
+    );
+  }
+
+  if (cameraError) {
+    return (
+      <p className="p-4 text-sm text-red-600">
+        Gagal mengambil konfigurasi CCTV.
+      </p>
+    );
+  }
+
+  if (cameras.length === 0) {
+    return (
+      <p className="p-4 text-sm text-slate-500">
+        Belum ada kamera CCTV yang terdaftar.
+      </p>
+    );
+  }
+  
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
