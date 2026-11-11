@@ -1,76 +1,121 @@
 
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
-import { useLineInOut } from "@/hooks/useLineInOut"
-import { useLine } from "@/hooks/useLine"
-import { useBasement } from "@/hooks/useBasement"
+import { useLineInOut } from "@/hooks/useLineInOut";
+import { useLine } from "@/hooks/useLine";
+import { useBasement } from "@/hooks/useBasement";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import type {
+  LineInOutBasement,
+  CreateLineInOutBasementRequest,
+} from "@/types/parking";
 
 export function LineDirectionSection() {
   const {
     lineInOuts,
     addLineInOut,
+    updateLineInOut,
     deleteLineInOut,
-  } = useLineInOut()
+    isLoading,
+  } = useLineInOut();
 
-  const { lines } = useLine()
-  const { basements } = useBasement()
+  const { lines } = useLine();
+  const { basements } = useBasement();
 
-  const [name, setName] = useState("")
-  const [lineId, setLineId] = useState("")
-  const [inBasementId, setInBasementId] = useState("")
-  const [outBasementId, setOutBasementId] = useState("")
+  const [name, setName] = useState("");
+  const [lineId, setLineId] = useState("");
+  const [inBasementId, setInBasementId] = useState("");
+  const [outBasementId, setOutBasementId] = useState("");
 
-  const handleAdd = () => {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const resetForm = () => {
+    setName("");
+    setLineId("");
+    setInBasementId("");
+    setOutBasementId("");
+    setEditingId(null);
+  };
+
+  const handleEdit = (item: LineInOutBasement) => {
+    setEditingId(item.id);
+    setName(item.name);
+    setLineId(item.lineId);
+    setInBasementId(item.inToBasement ?? "");
+    setOutBasementId(item.outToBasement ?? "");
+  };
+
+  const handleSave = async () => {
+    // Nama dan Line wajib diisi.
+    // Basement IN dan OUT boleh kosong.
+    if (!name.trim() || !lineId) {
+      alert("Nama konfigurasi dan Registered Line wajib diisi.");
+      return;
+    }
+
+    // Jika keduanya diisi, basement tidak boleh sama.
     if (
-      !name.trim() ||
-      !lineId ||
-      !inBasementId ||
-      !outBasementId
+      inBasementId &&
+      outBasementId &&
+      inBasementId === outBasementId
     ) {
-      alert("Lengkapi seluruh konfigurasi")
-      return
+      alert("Basement IN dan OUT tidak boleh sama.");
+      return;
     }
 
-    if (inBasementId === outBasementId) {
-      alert("Basement masuk dan keluar tidak boleh sama")
-      return
-    }
+    const payload: CreateLineInOutBasementRequest = {
+      name: name.trim(),
+      lineId,
+      inToBasementId: inBasementId ,
+      outToBasementId: outBasementId,
+    };
+
+    setIsSaving(true);
 
     try {
-      addLineInOut({
-        name: name.trim(),
-        lineId,
-        inToBasementId: inBasementId,
-        outToBasementId: outBasementId,
-      })
+      if (editingId) {
+        await updateLineInOut(editingId, payload);
+        alert("Konfigurasi Line IN/OUT berhasil diperbarui.");
+      } else {
+        await addLineInOut(payload);
+        alert("Konfigurasi Line IN/OUT berhasil ditambahkan.");
+      }
 
-      setName("")
-      setLineId("")
-      setInBasementId("")
-      setOutBasementId("")
+      resetForm();
+    } catch (error) {
+      console.error("[LINE IN/OUT] Gagal menyimpan:", error);
 
-      alert("Konfigurasi Line IN-OUT berhasil ditambahkan")
-    } catch {
-      alert("Gagal membuat konfigurasi Line IN-OUT")
+      alert(
+        editingId
+          ? "Gagal memperbarui konfigurasi Line IN/OUT."
+          : "Gagal menambahkan konfigurasi Line IN/OUT."
+      );
+    } finally {
+      setIsSaving(false);
     }
-  }
+  };
 
-  const handleDelete = (id: string) => {
-    if (!confirm("Hapus konfigurasi Line IN-OUT ini?")) return
+  const handleDelete = async (id: string) => {
+    if (!confirm("Hapus konfigurasi Line IN/OUT ini?")) return;
 
     try {
-      deleteLineInOut(id)
-      alert("Konfigurasi berhasil dihapus")
-    } catch {
-      alert("Gagal menghapus konfigurasi")
+      await deleteLineInOut(id);
+
+      if (editingId === id) resetForm();
+
+      alert("Konfigurasi berhasil dihapus.");
+    } catch (error) {
+      console.error("[LINE IN/OUT] Gagal menghapus:", error);
+      alert("Gagal menghapus konfigurasi.");
     }
-  }
+  };
 
   return (
     <div className="space-y-5">
@@ -108,7 +153,7 @@ export function LineDirectionSection() {
             onChange={(e) => setInBasementId(e.target.value)}
             className="h-10 w-full rounded-md border bg-background px-3 text-sm"
           >
-            <option value="">Select destination</option>
+            <option value="">Tidak digunakan</option>
 
             {basements.map((basement) => (
               <option key={basement.id} value={basement.id}>
@@ -119,13 +164,13 @@ export function LineDirectionSection() {
         </div>
 
         <div className="space-y-2">
-          <Label>OUT → From Basement</Label>
+          <Label>OUT → To Basement</Label>
           <select
             value={outBasementId}
             onChange={(e) => setOutBasementId(e.target.value)}
             className="h-10 w-full rounded-md border bg-background px-3 text-sm"
           >
-            <option value="">Select source</option>
+            <option value="">Tidak digunakan</option>
 
             {basements.map((basement) => (
               <option key={basement.id} value={basement.id}>
@@ -136,57 +181,112 @@ export function LineDirectionSection() {
         </div>
       </div>
 
-      <Button
-        onClick={handleAdd}
-        className="bg-[#263653] hover:bg-[#344766]"
-      >
-        Add Line IN-OUT
-      </Button>
+      <p className="text-xs text-slate-500">
+        Arah IN dan OUT dapat dikonfigurasi secara independen.
+        Salah satu atau keduanya boleh tidak digunakan.
+      </p>
+
+      <div className="flex justify-end gap-2">
+        {editingId && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={resetForm}
+            disabled={isSaving}
+          >
+            Cancel Edit
+          </Button>
+        )}
+
+        <Button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="bg-[#263653] hover:bg-[#344766]"
+        >
+          {isSaving
+            ? "Saving..."
+            : editingId
+              ? "Update Line IN-OUT"
+              : "Add Line IN-OUT"}
+        </Button>
+      </div>
 
       <div className="space-y-3 border-t pt-4">
-        <h3 className="font-semibold">Registered Configurations</h3>
+        <h3 className="font-semibold">
+          Registered Configurations
+        </h3>
 
-        {lineInOuts.map((item) => {
-          const line = lines.find(
-            (x) => x.id === item.lineId
-          )
+        {isLoading ? (
+          <p className="text-sm text-slate-500">
+            Loading configurations...
+          </p>
+        ) : lineInOuts.length === 0 ? (
+          <p className="text-sm text-slate-500">
+            Belum ada konfigurasi Line IN/OUT.
+          </p>
+        ) : (
+          lineInOuts.map((item) => {
+            const line = lines.find(
+              (x) => x.id === item.lineId
+            );
 
-          const inBasement = basements.find(
-            (x) => x.id === item.inToBasementId
-          )
+            const inBasement = basements.find(
+              (x) => x.id === item.inToBasement
+            );
 
-          const outBasement = basements.find(
-            (x) => x.id === item.outToBasementId
-          )
+            const outBasement = basements.find(
+              (x) => x.id === item.outToBasement
+            );
 
-          return (
-            <div
-              key={item.id}
-              className="flex items-center justify-between gap-3 rounded-lg border p-3"
-            >
-              <div>
-                <p className="font-semibold">{item.name}</p>
-
-                <p className="text-sm text-slate-500">
-                  {line?.name ?? "Line not found"}
-                </p>
-
-                <p className="text-xs text-slate-500">
-                  IN: {inBasement?.name ?? "-"} · OUT: {outBasement?.name ?? "-"}
-                </p>
-              </div>
-
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={() => handleDelete(item.id)}
+            return (
+              <div
+                key={item.id}
+                className="flex flex-col justify-between gap-3 rounded-lg border p-3 sm:flex-row sm:items-center"
               >
-                Delete
-              </Button>
-            </div>
-          )
-        })}
+                <div>
+                  <p className="font-semibold">{item.name}</p>
+
+                  <p className="text-sm text-slate-500">
+                    {line?.name ?? "Line not found"}
+                  </p>
+
+                  <p className="text-xs text-slate-500">
+                    IN:{" "}
+                    {item.inToBasement
+                      ? inBasement?.name ?? "Basement not found"
+                      : "Tidak digunakan"}
+                    {" · "}
+                    OUT:{" "}
+                    {item.outToBasement
+                      ? outBasement?.name ?? "Basement not found"
+                      : "Tidak digunakan"}
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEdit(item)}
+                    disabled={isSaving}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDelete(item.id)}
+                    disabled={isSaving}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
-  )
+  );
 }

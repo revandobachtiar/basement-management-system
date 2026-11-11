@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useCallback } from "react";
 
 import { parkingContextService } from "@/lib/services/parkingContext.service";
-import type { AddParkingContextInput } from "@/lib/services/parkingContext.mock.service";
+import type { CreateParkingContextRequest } from "@/types/parking";
 
 const PARKING_CONTEXT_KEY = "/parking-context";
 
@@ -17,17 +17,18 @@ export function useParkingContext() {
     mutate,
   } = useSWR(
     PARKING_CONTEXT_KEY,
-    () => parkingContextService.getAll(),{
+    () => parkingContextService.getAll(),
+    {
       revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    shouldRetryOnError: true,
-    errorRetryCount: 3,
-    dedupingInterval: 2000,
+      revalidateOnReconnect: true,
+      shouldRetryOnError: true,
+      errorRetryCount: 3,
+      dedupingInterval: 2000,
     }
   );
 
   const addContext = useCallback(
-    async (input: AddParkingContextInput) => {
+    async (input: CreateParkingContextRequest) => {
       const result = await parkingContextService.create(input);
       await mutate();
       return result;
@@ -36,10 +37,7 @@ export function useParkingContext() {
   );
 
   const updateContext = useCallback(
-    async (
-      id: string,
-      input: Partial<AddParkingContextInput>
-    ) => {
+    async (id: string, input: CreateParkingContextRequest) => {
       const result = await parkingContextService.update(id, input);
       await mutate();
       return result;
@@ -49,7 +47,7 @@ export function useParkingContext() {
 
   const deleteContext = useCallback(
     async (id: string) => {
-      await parkingContextService.remove(id);
+      await parkingContextService.delete(id);
       await mutate();
     },
     [mutate]

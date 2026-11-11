@@ -253,7 +253,7 @@ export type ParkingContextMock = {
   id: string;
   lineInOutBasementId: string;
   context: "IN" | "OUT";
-  apply: "INCREASE" | "REDUCE";
+  apply: "INCREMENT" | "REDUCE";
 };
 
 export const mockParkingContexts: ParkingContextMock[] = [
@@ -261,7 +261,7 @@ export const mockParkingContexts: ParkingContextMock[] = [
     id: "context-1",
     lineInOutBasementId: "mapping-1",
     context: "IN",
-    apply: "INCREASE",
+    apply: "INCREMENT",
   },
   {
     id: "context-2",
@@ -273,7 +273,7 @@ export const mockParkingContexts: ParkingContextMock[] = [
     id: "context-3",
     lineInOutBasementId: "mapping-2",
     context: "IN",
-    apply: "INCREASE",
+    apply: "INCREMENT",
   },
   {
     id: "context-4",
@@ -285,7 +285,7 @@ export const mockParkingContexts: ParkingContextMock[] = [
     id: "context-5",
     lineInOutBasementId: "mapping-3",
     context: "IN",
-    apply: "INCREASE",
+    apply: "INCREMENT",
   },
   {
     id: "context-6",

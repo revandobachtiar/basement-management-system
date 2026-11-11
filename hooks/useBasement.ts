@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useCallback } from "react";
 
 import { basementService } from "@/lib/services/basement.service";
-import type { AddBasementInput } from "@/types/parking";
+import type { CreateBasementRequest } from "@/types/parking";
 import { updateBasementMock } from "@/lib/services/basement.mock.service";
 
 const BASEMENT_KEY = "/basement";
@@ -25,7 +25,7 @@ export function useBasement() {
   });
 
   const addBasement = useCallback(
-    async (input: AddBasementInput) => {
+    async (input: CreateBasementRequest) => {
       const result = await basementService.create(input);
       await mutate();
       return result;
@@ -49,7 +49,7 @@ export function useBasement() {
   const updateBasement = useCallback(
     async (
       id: string,
-      input: AddBasementInput
+      input: CreateBasementRequest
     ) => {
       const result = await basementService.update(id, input);
       await mutate();

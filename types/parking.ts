@@ -44,13 +44,17 @@ export type Line = {
   isActive: boolean;
 };
 
+
 export type LineInOutBasement = {
   id: string;
   name: string;
   lineId: string;
-  inToBasement: string;
-  outToBasement: string;
+  inToBasement: string | null;
+  outToBasement: string | null;
+  inToBasementName?: string;
+  outToBasementName?: string;
 };
+
 
 export type CreateLineInOutBasementRequest = {
   name: string;

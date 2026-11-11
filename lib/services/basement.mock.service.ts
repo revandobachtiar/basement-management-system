@@ -3,8 +3,10 @@ import { mockBasements } from "@/mock/mockData";
 
 import type {
   Basement,
-  AddBasementInput,
+  CreateBasementRequest,
+  UpdateBasementRequest,
 } from "@/types/parking";
+
 
 export function getBasementsMock(): Basement[] {
   return mockBasements.map((item) => ({
@@ -13,7 +15,7 @@ export function getBasementsMock(): Basement[] {
 }
 
 export function createBasementMock(
-  input: AddBasementInput
+  input: CreateBasementRequest
 ): Basement {
   const newBasement = {
     id: `basement-${Date.now()}`,
@@ -32,7 +34,7 @@ export function createBasementMock(
 
 export function updateBasementMock(
   id: string,
-  input: Partial<AddBasementInput>
+  input: Partial<UpdateBasementRequest>
 ): Basement {
   const index = mockBasements.findIndex(
     (item) => item.id === id
