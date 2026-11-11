@@ -1,54 +1,52 @@
-
-import {
-  getParkingContextsMock,
-  getParkingContextByIdMock,
-  createParkingContextMock,
-  updateParkingContextMock,
-  deleteParkingContextMock,
-  type AddParkingContextInput,
-} from "./parkingContext.mock.service";
-
-import type { ParkingContext } from "@/types/parking";
-
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
-
-function ensureMockMode(): void {
-  if (!USE_MOCK) {
-    throw new Error(
-      "Parking Context API belum tersedia di backend. " +
-      "Gunakan NEXT_PUBLIC_USE_MOCK=true."
-    );
-  }
-}
+import { fetcher } from "@/lib/api/fetcher";
+import { API_ENDPOINTS } from "@/lib/api/api";
+import type {
+  ParkingContext,
+  CreateParkingContextRequest,
+} from "@/types/parking";
 
 export const parkingContextService = {
   async getAll(): Promise<ParkingContext[]> {
-    ensureMockMode();
-    return getParkingContextsMock();
+    return fetcher<ParkingContext[]>(
+      API_ENDPOINTS.PARKING_CONTEXT.GET
+    );
   },
 
   async getById(id: string): Promise<ParkingContext> {
-    ensureMockMode();
-    return getParkingContextByIdMock(id);
+    return fetcher<ParkingContext>(
+      API_ENDPOINTS.PARKING_CONTEXT.GET_BY_ID(id)
+    );
   },
 
   async create(
-    input: AddParkingContextInput
+    input: CreateParkingContextRequest
   ): Promise<ParkingContext> {
-    ensureMockMode();
-    return createParkingContextMock(input);
+    return fetcher<ParkingContext>(
+      API_ENDPOINTS.PARKING_CONTEXT.POST,
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      }
+    );
   },
 
   async update(
     id: string,
-    input: Partial<AddParkingContextInput>
+    input: CreateParkingContextRequest
   ): Promise<ParkingContext> {
-    ensureMockMode();
-    return updateParkingContextMock(id, input);
+    return fetcher<ParkingContext>(
+      API_ENDPOINTS.PARKING_CONTEXT.PUT(id),
+      {
+        method: "PUT",
+        body: JSON.stringify(input),
+      }
+    );
   },
 
-  async remove(id: string): Promise<void> {
-    ensureMockMode();
-    return deleteParkingContextMock(id);
+  async delete(id: string): Promise<void> {
+    return fetcher<void>(
+      API_ENDPOINTS.PARKING_CONTEXT.DELETE(id),
+      { method: "DELETE" }
+    );
   },
 };

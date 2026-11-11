@@ -13,7 +13,7 @@ type BackendBasement = {
 function extractBasementArray(response: unknown): BackendBasement[] {
   let payload = response;
 
-  // Mendukung respons berupa array langsung atau { data: [...] }
+
   if (
     typeof payload === "object" &&
     payload !== null &&

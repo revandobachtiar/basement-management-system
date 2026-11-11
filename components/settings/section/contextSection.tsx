@@ -15,11 +15,11 @@ export function ContextSection() {
 
   const [relationId, setRelationId] = useState("")
   const [context, setContext] = useState<"IN" | "OUT">("IN")
-  const [apply, setApply] = useState<"INCREASE" | "REDUCE">("INCREASE")
+  const [apply, setApply] = useState<"INCREMENT" | "REDUCE">("INCREMENT")
 
   const handleContextChange = (value: "IN" | "OUT") => {
     setContext(value)
-    setApply(value === "IN" ? "INCREASE" : "REDUCE")
+    setApply(value === "IN" ? "INCREMENT" : "REDUCE")
   }
 
   const handleSave = () => {
@@ -82,16 +82,16 @@ export function ContextSection() {
         <select
           value={apply}
           onChange={(e) =>
-            setApply(e.target.value as "INCREASE" | "REDUCE")
+            setApply(e.target.value as "INCREMENT" | "REDUCE")
           }
           className="h-10 w-full rounded-md border bg-background px-3 text-sm"
         >
-          <option value="INCREASE">INCREASE</option>
+          <option value="INCREMENT">INCREMENT</option>
           <option value="REDUCE">REDUCE</option>
         </select>
 
         <p className="text-xs text-slate-500">
-          INCREASE menambah jumlah kendaraan, sedangkan
+          INCREMENT menambah jumlah kendaraan, sedangkan
           REDUCE mengurangi jumlah kendaraan.
         </p>
       </div>

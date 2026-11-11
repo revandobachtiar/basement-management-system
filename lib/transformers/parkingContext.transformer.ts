@@ -5,7 +5,7 @@ type ParkingContextResponse = {
   id: string | number;
   lineInOutBasementId: string | number;
   context: "IN" | "OUT";
-  apply: "INCREASE" | "REDUCE";
+  apply: "INCREMENT" | "REDUCE";
 };
 
 export function transformParkingContext(

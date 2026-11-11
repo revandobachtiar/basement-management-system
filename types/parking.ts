@@ -14,8 +14,6 @@ export type Camera = {
   isActive: boolean;
 };
 
-// Basement
-
 export type Basement = {
   id: string;
   name: string;
@@ -26,58 +24,53 @@ export type Basement = {
   updatedAt: string;
 };
 
-// Line
+export type CreateBasementRequest = {
+  name: string;
+  capacity: number;
+};
+
+export type UpdateBasementRequest = {
+  id: string;
+  name: string;
+  capacity: number;
+};
+
+export type LineDirection = "in" | "out" | "both";
 
 export type Line = {
   id: string;
   name: string;
-  direction: "in" | "out" | "both";
+  direction: LineDirection;
   isActive: boolean;
 };
 
-// Line IN/OUT Basement
-
-export type LineInOut = {
+export type LineInOutBasement = {
   id: string;
   name: string;
   lineId: string;
-  inToBasementId: string | null;
-  outToBasementId: string | null;
+  inToBasement: string;
+  outToBasement: string;
 };
 
-
-export type ParkingContext = {
-  id: string;
-  lineInOutBasementId: string;
-  context: "IN" | "OUT";
-  apply: "INCREASE" | "REDUCE";
-};
-
-// Basement Count Update
-export type basementCountUpdate = {
-  basementId: string;
-  count: number;
-};
-
-// INPUT TYPES
-
-
-export type AddCameraInput = Omit<Camera, "id">;
-
-export type AddBasementInput = Pick<
-  Basement,
-  "name" | "capacity"
->;
-
-export type AddLineInput = Omit<Line, "id">;
-
-export type AddLineInOutInput = {
+export type CreateLineInOutBasementRequest = {
   name: string;
   lineId: string;
   inToBasementId: string;
   outToBasementId: string;
 };
 
-export type AddContextInput = Omit<ParkingContext, "id">;
+export type UpdateLineInOutBasementRequest =
+  CreateLineInOutBasementRequest;
 
-export type UpdateBasementCountInput = basementCountUpdate;
+export type ParkingContext = {
+  id: string;
+  lineInOutBasementId: string;
+  context: "IN" | "OUT";
+  apply: "INCREMENT" | "REDUCE";
+};
+
+export type CreateParkingContextRequest = {
+  lineInOutBasementId: string;
+  context: "IN" | "OUT";
+  apply: "INCREMENT" | "REDUCE";
+};

@@ -1,90 +1,86 @@
 
 import { fetcher } from "@/lib/api/fetcher";
 import { API_ENDPOINTS } from "@/lib/api/api";
+import { USE_MOCK } from "@/lib/api/config";
+
+import type {
+  Basement,
+  CreateBasementRequest,
+  UpdateBasementRequest,
+} from "@/types/parking";
 
 import {
   getBasementsMock,
   createBasementMock,
-  updateBasementCountMock,
   updateBasementMock,
-} from "./basement.mock.service";
-
-import type {
-  Basement,
-  AddBasementInput,
-} from "@/types/parking";
-
-import { transformBasement } from "@/lib/transformers/basement.transformer";
-
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
+} from "@/lib/services/basement.mock.service";
 
 export const basementService = {
   async getAll(): Promise<Basement[]> {
-  console.log("[BASEMENT] USE_MOCK:", USE_MOCK);
+    console.log("[BASEMENT] USE_MOCK:", USE_MOCK);
 
-  if (USE_MOCK) {
-        console.log("[BASEMENT] Menggunakan Mock Data");
-
-        const data = getBasementsMock();
-
-        console.log("[BASEMENT] Mock Data:", data);
-
-        return data;
+    if (USE_MOCK) {
+      console.log("[BASEMENT] Mengambil data dari MOCK");
+      return getBasementsMock();
     }
 
     console.log("[BASEMENT] Mengambil data dari API");
 
-    const response = await fetcher(
-        API_ENDPOINTS.BASEMENT.GET
+    return fetcher<Basement[]>(API_ENDPOINTS.BASEMENT.GET);
+  },
+
+  async getById(id: string): Promise<Basement> {
+    if (USE_MOCK) {
+      const data = getBasementsMock();
+      const basement = data.find((item) => item.id === id);
+
+      if (!basement) {
+        throw new Error("Basement tidak ditemukan");
+      }
+
+      return basement;
+    }
+
+    return fetcher<Basement>(
+      API_ENDPOINTS.BASEMENT.GET_BY_ID(id)
     );
+  },
 
-    return transformBasement(response);
-    },
+  async search(): Promise<Basement[]> {
+    if (USE_MOCK) {
+      return getBasementsMock();
+    }
 
-  async create(input: AddBasementInput): Promise<Basement> {
+    return fetcher<Basement[]>(API_ENDPOINTS.BASEMENT.SEARCH);
+  },
+
+  async create(
+    input: CreateBasementRequest
+  ): Promise<Basement> {
     if (USE_MOCK) {
       return createBasementMock(input);
     }
 
-    const response = await fetcher(
-      API_ENDPOINTS.BASEMENT.POST,
-      {
-        method: "POST",
-        body: JSON.stringify(input),
-      }
-    );
-
-    return transformBasement([response])[0];
+    return fetcher<Basement>(API_ENDPOINTS.BASEMENT.POST, {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
   },
 
   async update(
     id: string,
-    input: AddBasementInput
+    input: UpdateBasementRequest
   ): Promise<Basement> {
     if (USE_MOCK) {
       return updateBasementMock(id, input);
     }
 
-    const response = await fetcher(
+    return fetcher<Basement>(
       API_ENDPOINTS.BASEMENT.PUT(id),
       {
         method: "PUT",
-        body: JSON.stringify({ id, ...input }),
+        body: JSON.stringify(input),
       }
     );
-
-    return transformBasement([response])[0];
   },
-  async updateCurrentCount(
-    id: string,
-    count: number
-    ): Promise<Basement> {
-    if (!USE_MOCK) {
-        throw new Error(
-        "Endpoint untuk mengubah jumlah kendaraan belum tersedia di backend."
-        );
-    }
-
-    return updateBasementCountMock(id, count);
-    },
 };

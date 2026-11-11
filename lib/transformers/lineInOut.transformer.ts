@@ -1,4 +1,4 @@
-import type { LineInOut, Basement } from "@/types/parking";
+import type { LineInOutBasement, Basement } from "@/types/parking";
 
 type BasementReference = Pick<Basement, "id" | "name">;
 
@@ -33,30 +33,20 @@ function extractLineInOutArray(
 }
 
 export function transformLineInOut(
-  response: unknown,
-  basements: BasementReference[]
-): LineInOut[] {
-  const configurations = extractLineInOutArray(response);
+  item: LineInOutBasement,
+  basements: Basement[]
+) {
+  const inBasement = basements.find(
+    (basement) => basement.id === item.inToBasement
+  );
 
-  return configurations.map((item) => {
-    const inBasement = basements.find(
-      (basement) => basement.name === item.inToBasement
-    );
+  const outBasement = basements.find(
+    (basement) => basement.id === item.outToBasement
+  );
 
-    const outBasement = basements.find(
-      (basement) => basement.name === item.outToBasement
-    );
-
-    const inName = inBasement?.name ?? "—";
-    const outName = outBasement?.name ?? "—";
-    const name = `Line ${item.lineId} – ${inName} ${inBasement && outBasement ? "↔" : "→"} ${outName}`;
-
-    return {
-      id: String(item.id),
-      name,
-      lineId: String(item.lineId),
-      inToBasementId: inBasement?.id ?? null,
-      outToBasementId: outBasement?.id ?? null,
-    };
-  });
+  return {
+    ...item,
+    inToBasementName: inBasement?.name ?? "Tidak ditemukan",
+    outToBasementName: outBasement?.name ?? "Tidak ditemukan",
+  };
 }

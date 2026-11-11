@@ -3,4 +3,20 @@ export const USE_MOCK =
   process.env.NEXT_PUBLIC_USE_MOCK === "true";
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/proxy";
+
+console.log("[API CONFIG]", {
+  USE_MOCK,
+  API_BASE_URL,
+});
+
+
+
+
+
+
+// export const USE_MOCK =
+//   process.env.NEXT_PUBLIC_USE_MOCK === "true";
+
+// export const API_BASE_URL =
+//   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
