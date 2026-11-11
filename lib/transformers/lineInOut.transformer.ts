@@ -33,20 +33,22 @@ function extractLineInOutArray(
 }
 
 export function transformLineInOut(
-  item: LineInOutBasement,
-  basements: Basement[]
+  items: LineInOutBasement[],
+  basements: BasementReference[]
 ) {
-  const inBasement = basements.find(
-    (basement) => basement.id === item.inToBasement
-  );
+  return items.map((item) => {
+    const inBasement = basements.find(
+      (basement) => basement.id === item.inToBasement
+    );
 
-  const outBasement = basements.find(
-    (basement) => basement.id === item.outToBasement
-  );
+    const outBasement = basements.find(
+      (basement) => basement.id === item.outToBasement
+    );
 
-  return {
-    ...item,
-    inToBasementName: inBasement?.name ?? "Tidak ditemukan",
-    outToBasementName: outBasement?.name ?? "Tidak ditemukan",
-  };
+    return {
+      ...item,
+      inToBasementName: inBasement?.name ?? "Tidak ditemukan",
+      outToBasementName: outBasement?.name ?? "Tidak ditemukan",
+    };
+  });
 }

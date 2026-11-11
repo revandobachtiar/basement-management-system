@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useCallback } from "react";
 
 import { lineInOutService } from "@/lib/services/lineInOut.service";
-import type { AddLineInOutInput } from "@/types/parking";
+import type { CreateLineInOutBasementRequest, UpdateLineInOutBasementRequest } from "@/types/parking";
 
 const LINE_IN_OUT_KEY = "/line-in-out-basement";
 
@@ -27,7 +27,7 @@ export function useLineInOut() {
   );
 
   const addLineInOut = useCallback(
-    async (input: AddLineInOutInput) => {
+    async (input: CreateLineInOutBasementRequest) => {
       const result = await lineInOutService.create(input);
       await mutate();
       return result;
@@ -38,7 +38,7 @@ export function useLineInOut() {
   const updateLineInOut = useCallback(
     async (
       id: string,
-      input: AddLineInOutInput
+      input: UpdateLineInOutBasementRequest
     ) => {
       const result = await lineInOutService.update(id, input);
       await mutate();

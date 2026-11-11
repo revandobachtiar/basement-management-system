@@ -10,8 +10,8 @@ import {
 } from "./lineInOut.mock.service";
 
 import type {
-  LineInOut,
-  AddLineInOutInput,
+  LineInOutBasement,
+  CreateLineInOutBasementRequest,
 } from "@/types/parking";
 
 import { transformLineInOut } from "@/lib/transformers/lineInOut.transformer";
@@ -28,30 +28,32 @@ async function fetchBasements(): Promise<{ id: string; name: string }[]> {
 }
 
 export const lineInOutService = {
-  async getAll(): Promise<LineInOut[]> {
+  async getAll(): Promise<LineInOutBasement[]> {
     if (USE_MOCK) {
       return getLineInOutsMock();
     }
 
     const [response, basements] = await Promise.all([
-      fetcher<unknown>(API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET, {
-        method: "GET",
-      }),
+      fetcher<LineInOutBasement[]>(
+        API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET,
+        { method: "GET" }
+      ),
       fetchBasements(),
     ]);
 
     return transformLineInOut(response, basements);
   },
 
-  async getById(id: string): Promise<LineInOut> {
+  async getById(id: string): Promise<LineInOutBasement> {
     if (USE_MOCK) {
       return getLineInOutByIdMock(id);
     }
 
     const [response, basements] = await Promise.all([
-      fetcher<unknown>(API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET_BY_ID(id), {
-        method: "GET",
-      }),
+      fetcher<LineInOutBasement>(
+        API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET_BY_ID(id),
+        { method: "GET" }
+      ),
       fetchBasements(),
     ]);
 
@@ -59,12 +61,12 @@ export const lineInOutService = {
     return result[0];
   },
 
-  async create(input: AddLineInOutInput): Promise<LineInOut> {
+  async create(input: CreateLineInOutBasementRequest): Promise<LineInOutBasement> {
     if (USE_MOCK) {
       return createLineInOutMock(input);
     }
 
-    const response = await fetcher<LineInOut>(
+    const response = await fetcher<LineInOutBasement>(
       API_ENDPOINTS.LINE_IN_OUT_BASEMENT.POST,
       {
         method: "POST",
@@ -77,13 +79,13 @@ export const lineInOutService = {
 
   async update(
     id: string,
-    input: AddLineInOutInput
-  ): Promise<LineInOut> {
+    input: CreateLineInOutBasementRequest
+  ): Promise<LineInOutBasement> {
     if (USE_MOCK) {
       return updateLineInOutMock(id, input);
     }
 
-    const response = await fetcher<LineInOut>(
+    const response = await fetcher<LineInOutBasement>(
       API_ENDPOINTS.LINE_IN_OUT_BASEMENT.PUT(id),
       {
         method: "PUT",

@@ -11,7 +11,7 @@ import {
 
 import type {
   Line,
-  AddLineInput,
+  CreateLineInOutBasementRequest,
 } from "@/types/parking";
 
 import { transformLine } from "@/lib/transformers/line.transformer";
@@ -27,7 +27,7 @@ export const lineService = {
     return transformLine(response);
   },
 
-  async create(input: AddLineInput): Promise<Line> {
+  async create(input: CreateLineInOutBasementRequest): Promise<Line> {
     if (USE_MOCK) return createLineMock(input);
 
     const response = await fetcher(
@@ -43,7 +43,7 @@ export const lineService = {
 
   async update(
     id: string,
-    input: Partial<AddLineInput>
+    input: Partial<CreateLineInOutBasementRequest>
   ): Promise<Line> {
     if (USE_MOCK) return updateLineMock(id, input);
 

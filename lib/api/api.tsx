@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
     GET_BY_ID: (id: string) => `/basement/${id}`,
     POST: "/basement",
     PUT: (id: string) => `/basement/${id}`,
+    DELETE: (id: string) => `/basement/${id}`,
   },
 
   LINE: {
