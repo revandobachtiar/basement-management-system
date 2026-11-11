@@ -1,0 +1,1340 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Basement Monitoring API",
+    "description": "OpenAPI specification and Swagger documentation for the Basement Monitoring system",
+    "version": "1.0",
+    "contact": {}
+  },
+  "servers": [
+    {
+      "url": "http://192.168.1.27:3000",
+      "description": "Local Development Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "App",
+      "description": "General endpoints"
+    },
+    {
+      "name": "Basement",
+      "description": "Basement management endpoints"
+    },
+    {
+      "name": "Line",
+      "description": "Line management endpoints"
+    },
+    {
+      "name": "Line In Out Basement",
+      "description": "Line in/out basement mapping endpoints"
+    },
+    {
+      "name": "Incr Red Line",
+      "description": "Increment/Reduce line configuration endpoints"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return welcome message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Health check / get hello message",
+        "tags": ["App"]
+      }
+    },
+    "/basement": {
+      "post": {
+        "operationId": "BasementController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterBasementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Basement registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterBasementResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Basement name already exists or invalid data"
+          }
+        },
+        "summary": "Register a new basement",
+        "tags": ["Basement"]
+      },
+      "get": {
+        "operationId": "BasementController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all basements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindBasementResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all basements",
+        "tags": ["Basement"]
+      }
+    },
+    "/basement/search": {
+      "get": {
+        "operationId": "BasementController_search",
+        "parameters": [
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "Basement UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Basement name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found basement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindBasementResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters (provide only one of id or name)"
+          },
+          "404": {
+            "description": "Basement not found"
+          }
+        },
+        "summary": "Search basement by ID or name",
+        "tags": ["Basement"]
+      }
+    },
+    "/basement/{id}": {
+      "get": {
+        "operationId": "BasementController_findById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Basement UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found basement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindBasementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Basement not found"
+          }
+        },
+        "summary": "Find basement by ID",
+        "tags": ["Basement"]
+      },
+      "put": {
+        "operationId": "BasementController_edit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Basement UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditBasementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Basement updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindBasementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Basement not found"
+          }
+        },
+        "summary": "Edit basement details",
+        "tags": ["Basement"]
+      }
+    },
+    "/line": {
+      "post": {
+        "operationId": "LineController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterLineRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Line registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterLineResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Line name already exists or invalid data"
+          }
+        },
+        "summary": "Register a new line",
+        "tags": ["Line"]
+      },
+      "get": {
+        "operationId": "LineController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all lines",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindLineResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all lines",
+        "tags": ["Line"]
+      }
+    },
+    "/line/search": {
+      "get": {
+        "operationId": "LineController_search",
+        "parameters": [
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Line name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found line",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Line not found"
+          }
+        },
+        "summary": "Search line by ID or name",
+        "tags": ["Line"]
+      }
+    },
+    "/line/{id}": {
+      "get": {
+        "operationId": "LineController_findById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found line",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Line not found"
+          }
+        },
+        "summary": "Find line by ID",
+        "tags": ["Line"]
+      },
+      "put": {
+        "operationId": "LineController_edit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditLineRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Line updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Line not found"
+          }
+        },
+        "summary": "Edit line details",
+        "tags": ["Line"]
+      },
+      "delete": {
+        "operationId": "LineController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Line deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Line not found"
+          }
+        },
+        "summary": "Delete line by ID",
+        "tags": ["Line"]
+      }
+    },
+    "/line-in-out-basement": {
+      "post": {
+        "operationId": "LineInOutBasementController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterLineInOutBasementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mapping registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterLineInOutBasementResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Register a line in/out basement mapping",
+        "tags": ["Line In Out Basement"]
+      },
+      "get": {
+        "operationId": "LineInOutBasementController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all mappings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindLineInOutBasementResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all line in/out basement mappings",
+        "tags": ["Line In Out Basement"]
+      }
+    },
+    "/line-in-out-basement/lineid": {
+      "get": {
+        "operationId": "LineInOutBasementController_searchByLineId",
+        "parameters": [
+          {
+            "name": "lineId",
+            "required": true,
+            "in": "query",
+            "description": "Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of mappings for the line",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindLineInOutBasementResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Find line in/out basement mappings by Line ID",
+        "tags": ["Line In Out Basement"]
+      }
+    },
+    "/line-in-out-basement/search": {
+      "get": {
+        "operationId": "LineInOutBasementController_search",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "description": "LineInOutBasement UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found mapping",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindLineInOutBasementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mapping not found"
+          }
+        },
+        "summary": "Search line in/out basement mapping by ID",
+        "tags": ["Line In Out Basement"]
+      }
+    },
+    "/line-in-out-basement/{id}": {
+      "get": {
+        "operationId": "LineInOutBasementController_findById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "LineInOutBasement UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found mapping",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindLineInOutBasementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mapping not found"
+          }
+        },
+        "summary": "Find line in/out basement mapping by ID",
+        "tags": ["Line In Out Basement"]
+      },
+      "put": {
+        "operationId": "LineInOutBasementController_edit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "LineInOutBasement UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditLineInOutBasementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mapping updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindLineInOutBasementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mapping not found"
+          }
+        },
+        "summary": "Edit line in/out basement mapping",
+        "tags": ["Line In Out Basement"]
+      },
+      "delete": {
+        "operationId": "LineInOutBasementController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "LineInOutBasement UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mapping deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteLineInOutBasementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mapping not found"
+          }
+        },
+        "summary": "Delete line in/out basement mapping by ID",
+        "tags": ["Line In Out Basement"]
+      }
+    },
+    "/incr-red-line": {
+      "post": {
+        "operationId": "IncrRedLineController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterIncrRedLineRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Increment/reduce line configuration created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterIncrRedLineResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Register a new increment/reduce line configuration",
+        "tags": ["Incr Red Line"]
+      },
+      "get": {
+        "operationId": "IncrRedLineController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all increment/reduce configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindIncrRedLineResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all increment/reduce line configurations",
+        "tags": ["Incr Red Line"]
+      }
+    },
+    "/incr-red-line/search": {
+      "get": {
+        "operationId": "IncrRedLineController_search",
+        "parameters": [
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "Increment/Reduce Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lineInOutBasementId",
+            "required": false,
+            "in": "query",
+            "description": "LineInOutBasement UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIncrRedLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found"
+          }
+        },
+        "summary": "Search increment/reduce configuration by ID or LineInOutBasement ID",
+        "tags": ["Incr Red Line"]
+      }
+    },
+    "/incr-red-line/{id}": {
+      "get": {
+        "operationId": "IncrRedLineController_findById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Increment/Reduce Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIncrRedLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found"
+          }
+        },
+        "summary": "Find increment/reduce configuration by ID",
+        "tags": ["Incr Red Line"]
+      },
+      "put": {
+        "operationId": "IncrRedLineController_edit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Increment/Reduce Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditIncrRedLineRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIncrRedLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found"
+          }
+        },
+        "summary": "Edit increment/reduce configuration",
+        "tags": ["Incr Red Line"]
+      },
+      "delete": {
+        "operationId": "IncrRedLineController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Increment/Reduce Line UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteIncrRedLineResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Configuration not found"
+          }
+        },
+        "summary": "Delete increment/reduce configuration by ID",
+        "tags": ["Incr Red Line"]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegisterBasementRequestDto": {
+        "type": "object",
+        "properties": {
+          "capacity": {
+            "type": "number",
+            "description": "Total capacity of the basement",
+            "example": 100,
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the basement",
+            "example": "Basement A"
+          }
+        },
+        "required": ["capacity"]
+      },
+      "RegisterBasementResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Basement unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the basement",
+            "example": "Basement A"
+          },
+          "capacity": {
+            "type": "number",
+            "description": "Maximum capacity of the basement",
+            "example": 100
+          },
+          "currentCount": {
+            "type": "number",
+            "description": "Current count of vehicles or occupants",
+            "example": 0
+          }
+        },
+        "required": ["id", "name", "capacity", "currentCount"]
+      },
+      "FindBasementResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Basement unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the basement",
+            "example": "Basement A"
+          },
+          "capacity": {
+            "type": "number",
+            "description": "Maximum capacity of the basement",
+            "example": 100
+          },
+          "currentCount": {
+            "type": "number",
+            "description": "Current vehicle / occupant count",
+            "example": 45
+          },
+          "available": {
+            "type": "number",
+            "description": "Available remaining slots",
+            "example": 55
+          },
+          "isFull": {
+            "type": "boolean",
+            "description": "Whether the basement is full",
+            "example": false
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Last update timestamp",
+            "example": "2026-11-10T10:00:00.000Z"
+          }
+        },
+        "required": ["id", "name", "capacity", "currentCount", "available", "isFull", "updatedAt"]
+      },
+      "EditBasementRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Basement unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the basement",
+            "example": "Basement A"
+          },
+          "capacity": {
+            "type": "number",
+            "description": "Total capacity of the basement",
+            "example": 120,
+            "minimum": 1
+          }
+        },
+        "required": ["id", "name", "capacity"]
+      },
+      "RegisterLineRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the line",
+            "example": "Gate A Entrance"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Direction mode of the line",
+            "enum": ["in", "out", "both"],
+            "example": "in"
+          }
+        },
+        "required": ["name", "direction"]
+      },
+      "RegisterLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Line unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the line",
+            "example": "Gate A Entrance"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Direction mode of the line",
+            "enum": ["in", "out", "both"],
+            "example": "in"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Status indicating if the line is active",
+            "example": true
+          }
+        },
+        "required": ["id", "name", "direction", "isActive"]
+      },
+      "FindLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Line unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the line",
+            "example": "Gate A Entrance"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Direction mode of the line",
+            "enum": ["in", "out", "both"],
+            "example": "in"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Status indicating if the line is active",
+            "example": true
+          }
+        },
+        "required": ["id", "name", "direction", "isActive"]
+      },
+      "EditLineRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Line unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the line",
+            "example": "Gate A Entrance"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Direction mode of the line",
+            "enum": ["in", "out", "both"],
+            "example": "in"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Status indicating if the line is active",
+            "example": true
+          }
+        },
+        "required": ["id", "name", "direction", "isActive"]
+      },
+      "DeleteLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Deleted Line unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the deleted line",
+            "example": "Gate A Entrance"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "RegisterLineInOutBasementRequestDto": {
+        "type": "object",
+        "properties": {
+          "lineId": {
+            "type": "string",
+            "description": "Line UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "name": {
+            "type": "string",
+            "description": "Mapping name",
+            "example": "Gate A to Basement 1"
+          },
+          "inToBasementId": {
+            "type": "string",
+            "description": "Target Basement UUID for entry direction",
+            "example": "123e4567-e89b-12d3-a456-426614174002"
+          },
+          "outToBasementId": {
+            "type": "string",
+            "description": "Target Basement UUID for exit direction",
+            "example": "123e4567-e89b-12d3-a456-426614174003"
+          }
+        },
+        "required": ["lineId", "name", "inToBasementId", "outToBasementId"]
+      },
+      "RegisterLineInOutBasementResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LineInOutBasement UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lineId": {
+            "type": "string",
+            "description": "Associated Line UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "name": {
+            "type": "string",
+            "description": "Mapping name",
+            "example": "Basement A In/Out mapping"
+          },
+          "inToBasementId": {
+            "type": "string",
+            "description": "Target Basement UUID for entry, or null",
+            "example": "123e4567-e89b-12d3-a456-426614174002",
+            "nullable": true
+          },
+          "outToBasementId": {
+            "type": "string",
+            "description": "Target Basement UUID for exit, or null",
+            "example": "123e4567-e89b-12d3-a456-426614174003",
+            "nullable": true
+          }
+        },
+        "required": ["id", "lineId", "name", "inToBasementId", "outToBasementId"]
+      },
+      "FindLineInOutBasementResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LineInOutBasement UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Mapping name",
+            "example": "Basement A In/Out mapping"
+          },
+          "lineId": {
+            "type": "string",
+            "description": "Associated Line UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "inToBasement": {
+            "type": "string",
+            "description": "Target Basement UUID for entry, or null",
+            "example": "123e4567-e89b-12d3-a456-426614174002",
+            "nullable": true
+          },
+          "outToBasement": {
+            "type": "string",
+            "description": "Target Basement UUID for exit, or null",
+            "example": "123e4567-e89b-12d3-a456-426614174003",
+            "nullable": true
+          }
+        },
+        "required": ["id", "name", "lineId", "inToBasement", "outToBasement"]
+      },
+      "EditLineInOutBasementRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LineInOutBasement UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Mapping name",
+            "example": "Gate A to Basement 1"
+          },
+          "lineId": {
+            "type": "string",
+            "description": "Line UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "inToBasementId": {
+            "type": "string",
+            "description": "Target Basement UUID for entry direction",
+            "example": "123e4567-e89b-12d3-a456-426614174002"
+          },
+          "outToBasementId": {
+            "type": "string",
+            "description": "Target Basement UUID for exit direction",
+            "example": "123e4567-e89b-12d3-a456-426614174003"
+          }
+        },
+        "required": ["id", "name", "lineId", "inToBasementId", "outToBasementId"]
+      },
+      "DeleteLineInOutBasementResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Deleted LineInOutBasement UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lineId": {
+            "type": "string",
+            "description": "Associated Line UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          }
+        },
+        "required": ["id", "lineId"]
+      },
+      "RegisterIncrRedLineRequestDto": {
+        "type": "object",
+        "properties": {
+          "lineInOutBasementId": {
+            "type": "string",
+            "description": "LineInOutBasement UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "context": {
+            "type": "string",
+            "description": "Line direction context",
+            "enum": ["IN", "OUT"],
+            "example": "IN"
+          },
+          "apply": {
+            "type": "string",
+            "description": "Operation applied to counter",
+            "enum": ["INCREMENT", "REDUCE"],
+            "example": "INCREMENT"
+          }
+        },
+        "required": ["lineInOutBasementId", "context", "apply"]
+      },
+      "RegisterIncrRedLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Increment/Reduce Line configuration ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lineInOutBasementId": {
+            "type": "string",
+            "description": "Associated LineInOutBasement ID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "context": {
+            "type": "string",
+            "description": "Context direction of the line event",
+            "enum": ["in", "out"],
+            "example": "in"
+          },
+          "apply": {
+            "type": "string",
+            "description": "Action applied to basement count",
+            "enum": ["INCREMENT", "REDUCE"],
+            "example": "INCREMENT"
+          }
+        },
+        "required": ["id", "lineInOutBasementId", "context", "apply"]
+      },
+      "FindIncrRedLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Increment/Reduce Line configuration ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lineInOutBasementId": {
+            "type": "string",
+            "description": "Associated LineInOutBasement ID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "context": {
+            "type": "string",
+            "description": "Context direction of the line event",
+            "enum": ["in", "out"],
+            "example": "in"
+          },
+          "apply": {
+            "type": "string",
+            "description": "Action applied to basement count",
+            "enum": ["INCREMENT", "REDUCE"],
+            "example": "INCREMENT"
+          }
+        },
+        "required": ["id", "lineInOutBasementId", "context", "apply"]
+      },
+      "EditIncrRedLineRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Increment/Reduce Line configuration UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lineInOutBasementId": {
+            "type": "string",
+            "description": "LineInOutBasement UUID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "context": {
+            "type": "string",
+            "description": "Line direction context",
+            "enum": ["IN", "OUT"],
+            "example": "IN"
+          },
+          "apply": {
+            "type": "string",
+            "description": "Operation applied to counter",
+            "enum": ["INCREMENT", "REDUCE"],
+            "example": "INCREMENT"
+          }
+        },
+        "required": ["id", "lineInOutBasementId", "context", "apply"]
+      },
+      "DeleteIncrRedLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Deleted Increment/Reduce Line configuration ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lineInOutBasementId": {
+            "type": "string",
+            "description": "Associated LineInOutBasement ID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          }
+        },
+        "required": ["id", "lineInOutBasementId"]
+      }
+    }
+  }
+}
