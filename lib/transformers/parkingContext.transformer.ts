@@ -1,30 +1,70 @@
 
 import type { ParkingContext } from "@/types/parking";
 
+type BackendId = string | number | { value: string };
+
 type ParkingContextResponse = {
-  id: string | number;
-  lineInOutBasementId: string | number;
+  id: BackendId;
+  lineInOutBasementId: BackendId;
   context: "IN" | "OUT";
   apply: "INCREMENT" | "REDUCE";
 };
 
+function normalizeId(id: BackendId): string {
+  if (typeof id === "object" && id !== null) {
+    return id.value;
+  }
+
+  return String(id);
+}
+
+function extractPayload(response: unknown): unknown {
+  if (
+    typeof response === "object" &&
+    response !== null &&
+    !Array.isArray(response) &&
+    "data" in response
+  ) {
+    return response.data;
+  }
+
+  return response;
+}
+
 export function transformParkingContext(
-  data: ParkingContextResponse
+  response: unknown
 ): ParkingContext {
+  const payload = extractPayload(response);
+
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    !("id" in payload) ||
+    !("lineInOutBasementId" in payload) ||
+    !("context" in payload) ||
+    !("apply" in payload)
+  ) {
+    throw new Error("Format response Context tidak valid.");
+  }
+
+  const item = payload as ParkingContextResponse;
+
   return {
-    id: String(data.id),
-    lineInOutBasementId: String(data.lineInOutBasementId),
-    context: data.context,
-    apply: data.apply,
+    id: normalizeId(item.id),
+    lineInOutBasementId: normalizeId(item.lineInOutBasementId),
+    context: item.context,
+    apply: item.apply,
   };
 }
 
 export function transformParkingContextList(
-  response:
-    | { data: ParkingContextResponse[] }
-    | ParkingContextResponse[]
+  response: unknown
 ): ParkingContext[] {
-  const data = Array.isArray(response) ? response : response.data;
+  const payload = extractPayload(response);
 
-  return data.map(transformParkingContext);
+  if (!Array.isArray(payload)) {
+    throw new Error("Format daftar Context tidak valid.");
+  }
+
+  return payload.map(transformParkingContext);
 }

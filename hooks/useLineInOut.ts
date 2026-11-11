@@ -5,7 +5,11 @@ import useSWR from "swr";
 import { useCallback } from "react";
 
 import { lineInOutService } from "@/lib/services/lineInOut.service";
-import type { CreateLineInOutBasementRequest, UpdateLineInOutBasementRequest } from "@/types/parking";
+import type {
+  CreateLineInOutBasementRequest,
+  UpdateLineInOutBasementRequest,
+} from "@/types/parking";
+
 
 const LINE_IN_OUT_KEY = "/line-in-out-basement";
 
@@ -17,12 +21,13 @@ export function useLineInOut() {
     mutate,
   } = useSWR(
     LINE_IN_OUT_KEY,
-    () => lineInOutService.getAll(), {
+    () => lineInOutService.getAll(),
+    {
       revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    shouldRetryOnError: true,
-    errorRetryCount: 3,
-    dedupingInterval: 2000,
+      revalidateOnReconnect: true,
+      shouldRetryOnError: true,
+      errorRetryCount: 3,
+      dedupingInterval: 2000,
     }
   );
 

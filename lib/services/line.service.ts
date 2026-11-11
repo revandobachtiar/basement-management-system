@@ -12,6 +12,7 @@ import {
 import type {
   Line,
   CreateLineInOutBasementRequest,
+  UpdateLineInOutBasementRequest,
 } from "@/types/parking";
 
 import { transformLine } from "@/lib/transformers/line.transformer";
@@ -43,7 +44,7 @@ export const lineService = {
 
   async update(
     id: string,
-    input: Partial<CreateLineInOutBasementRequest>
+    input: Partial<UpdateLineInOutBasementRequest>
   ): Promise<Line> {
     if (USE_MOCK) return updateLineMock(id, input);
 

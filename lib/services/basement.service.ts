@@ -10,6 +10,11 @@ import type {
 } from "@/types/parking";
 
 import {
+  transformBasement,
+  transformBasementDetail,
+} from "@/lib/transformers/basement.transformer";
+
+import {
   getBasementsMock,
   createBasementMock,
   updateBasementMock,
@@ -26,7 +31,11 @@ export const basementService = {
 
     console.log("[BASEMENT] Mengambil data dari API");
 
-    return fetcher<Basement[]>(API_ENDPOINTS.BASEMENT.GET);
+    const response = await fetcher<unknown>(
+      API_ENDPOINTS.BASEMENT.GET
+    );
+
+    return transformBasement(response);
   },
 
   async getById(id: string): Promise<Basement> {
@@ -41,9 +50,11 @@ export const basementService = {
       return basement;
     }
 
-    return fetcher<Basement>(
+    const response = await fetcher<unknown>(
       API_ENDPOINTS.BASEMENT.GET_BY_ID(id)
     );
+
+    return transformBasementDetail(response);
   },
 
   async search(): Promise<Basement[]> {
@@ -51,7 +62,11 @@ export const basementService = {
       return getBasementsMock();
     }
 
-    return fetcher<Basement[]>(API_ENDPOINTS.BASEMENT.SEARCH);
+    const response = await fetcher<unknown>(
+      API_ENDPOINTS.BASEMENT.SEARCH
+    );
+
+    return transformBasement(response);
   },
 
   async create(
@@ -61,10 +76,15 @@ export const basementService = {
       return createBasementMock(input);
     }
 
-    return fetcher<Basement>(API_ENDPOINTS.BASEMENT.POST, {
-      method: "POST",
-      body: JSON.stringify(input),
-    });
+    const response = await fetcher<unknown>(
+      API_ENDPOINTS.BASEMENT.POST,
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      }
+    );
+
+    return transformBasementDetail(response);
   },
 
   async update(
@@ -75,12 +95,14 @@ export const basementService = {
       return updateBasementMock(id, input);
     }
 
-    return fetcher<Basement>(
+    const response = await fetcher<unknown>(
       API_ENDPOINTS.BASEMENT.PUT(id),
       {
         method: "PUT",
         body: JSON.stringify(input),
       }
     );
+
+    return transformBasementDetail(response);
   },
 };

@@ -26,6 +26,9 @@ export default function StreamPreview({
     if (type === "HLS") {
       if (video.canPlayType("application/vnd.apple.mpegurl")) {
         video.src = url;
+        video.play().catch((err) =>
+          console.warn("Autoplay blocked or failed:", err)
+        );
       } else if (Hls.isSupported()) {
         hls = new Hls();
         hls.loadSource(url);
@@ -36,11 +39,18 @@ export default function StreamPreview({
             console.error("HLS playback error:", data);
           }
         });
+
+        video.play().catch((err) =>
+          console.warn("Autoplay blocked or failed:", err)
+        );
       }
     }
 
     if (type === "MP4") {
       video.src = url;
+      video.play().catch((err) =>
+        console.warn("Autoplay blocked or failed:", err)
+      );
     }
 
     return () => {
