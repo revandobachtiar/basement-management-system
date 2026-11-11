@@ -10,6 +10,7 @@ import type {
   UpdateLineInOutBasementRequest,
 } from "@/types/parking";
 
+
 const LINE_IN_OUT_KEY = "/line-in-out-basement";
 
 export function useLineInOut() {

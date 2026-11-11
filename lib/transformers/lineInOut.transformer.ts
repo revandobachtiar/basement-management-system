@@ -60,7 +60,6 @@ export function transformLineInOut(
     const lineId = normalizeId(item.lineId);
     const inToBasementId = normalizeId(item.inToBasement);
     const outToBasementId = normalizeId(item.outToBasement);
-
     if (!id || !lineId) {
       throw new Error(
         "ID Line IN/OUT atau Line tidak valid."
@@ -90,3 +89,4 @@ export function transformLineInOut(
     };
   });
 }
+

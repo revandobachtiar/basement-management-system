@@ -72,10 +72,17 @@ const JSON_HEADERS = {
 
 export const lineInOutService = {
   async getAll(): Promise<LineInOutBasement[]> {
-    if (USE_MOCK) return getLineInOutsMock();
+
+    if (USE_MOCK) {
+      return getLineInOutsMock();
+    }
 
     const [response, basements] = await Promise.all([
-      fetcher<unknown>(API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET),
+      fetcher<LineInOutBasement[]>(
+        API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET,
+        { method: "GET" }
+      ),
+
       fetchBasements(),
     ]);
 
@@ -87,15 +94,21 @@ export const lineInOutService = {
   },
 
   async getById(id: string): Promise<LineInOutBasement> {
-    if (USE_MOCK) return getLineInOutByIdMock(id);
+    if (USE_MOCK) {
+      return getLineInOutByIdMock(id);
+    }
 
-    const response = await fetcher<unknown>(
-      API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET_BY_ID(id)
-    );
+    const [response, basements] = await Promise.all([
+      fetcher<LineInOutBasement>(
+        API_ENDPOINTS.LINE_IN_OUT_BASEMENT.GET_BY_ID(id),
+        { method: "GET" }
+      ),
+      fetchBasements(),
+    ]);
+
 
     return transformResponse(response);
   },
-
   async create(
     input: CreateLineInOutBasementRequest
   ): Promise<LineInOutBasement> {
@@ -128,6 +141,7 @@ export const lineInOutService = {
 
   async update(
     id: string,
+
     input: UpdateLineInOutBasementRequest
   ): Promise<LineInOutBasement> {
     if (USE_MOCK) return updateLineInOutMock(id, input);
@@ -142,6 +156,7 @@ export const lineInOutService = {
     console.log("[LINE IN/OUT] Payload PUT:", payload);
 
     const response = await fetcher<unknown>(
+
       API_ENDPOINTS.LINE_IN_OUT_BASEMENT.PUT(id),
       {
         method: "PUT",

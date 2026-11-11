@@ -1,0 +1,22 @@
+[
+  {
+    "id": "camera-1",
+    "name": "CCTV Entrance P1",
+    "streamingUrl": "https://example.com/stream/p1-in.m3u8",
+    "streamType": "HLS",
+    "basementId": "basement-p1",
+    "lineId": "line-1",
+    "direction": "IN",
+    "isActive": true
+  },
+  {
+    "id": "camera-1794387345716",
+    "name": "P1",
+    "streamingUrl": "https://ireplay.tv/test/blender.m3u8",
+    "streamType": "HLS",
+    "basementId": "[object Object]",
+    "lineId": "[object Object]",
+    "direction": "IN",
+    "isActive": true
+  }
+]
