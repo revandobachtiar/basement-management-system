@@ -53,8 +53,7 @@ export function LineDirectionSection() {
   };
 
   const handleSave = async () => {
-    // Nama dan Line wajib diisi.
-    // Basement IN dan OUT boleh kosong.
+ 
     if (!name.trim() || !lineId) {
       alert("Nama konfigurasi dan Registered Line wajib diisi.");
       return;

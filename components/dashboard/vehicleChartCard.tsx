@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo, useState } from "react"
@@ -27,7 +26,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
 } from "recharts"
 
 type Period = "hourly" | "daily"
@@ -40,74 +38,120 @@ interface VehicleData {
   capacity: number
 }
 
-const HOURLY_DATA: VehicleData[] = [
-  { time: "08:00", in: 12, out: 3, total: 9, capacity: 500 },
-  { time: "09:00", in: 28, out: 8, total: 29, capacity: 500 },
-  { time: "10:00", in: 42, out: 15, total: 56, capacity: 500 },
-  { time: "11:00", in: 35, out: 18, total: 73, capacity: 500 },
-  { time: "12:00", in: 48, out: 22, total: 99, capacity: 500 },
-  { time: "13:00", in: 55, out: 30, total: 124, capacity: 500 },
-  { time: "14:00", in: 62, out: 35, total: 151, capacity: 500 },
-  { time: "15:00", in: 45, out: 40, total: 156, capacity: 500 },
-  { time: "16:00", in: 58, out: 42, total: 172, capacity: 500 },
-  { time: "17:00", in: 75, out: 48, total: 199, capacity: 500 },
-  { time: "18:00", in: 85, out: 55, total: 229, capacity: 500 },
-  { time: "19:00", in: 65, out: 70, total: 224, capacity: 500 },
-  { time: "20:00", in: 52, out: 80, total: 196, capacity: 500 },
-  { time: "21:00", in: 35, out: 90, total: 141, capacity: 500 },
-]
-
-const DAILY_DATA: VehicleData[] = [
-  { time: "Sen", in: 420, out: 390, total: 180, capacity: 500 },
-  { time: "Sel", in: 380, out: 410, total: 150, capacity: 500 },
-  { time: "Rab", in: 510, out: 470, total: 190, capacity: 500 },
-  { time: "Kam", in: 560, out: 520, total: 230, capacity: 500 },
-  { time: "Jum", in: 680, out: 620, total: 290, capacity: 500 },
-  { time: "Sab", in: 890, out: 820, total: 360, capacity: 500 },
-  { time: "Min", in: 760, out: 810, total: 310, capacity: 500 },
-]
+interface BasementOption {
+  id: string
+  name: string
+}
 
 interface VehicleChartCardProps {
+  basements: BasementOption[]
   data?: {
     hourly?: VehicleData[]
     daily?: VehicleData[]
+    byBasement?: Record<
+      string,
+      {
+        hourly?: VehicleData[]
+        daily?: VehicleData[]
+      }
+    >
   }
 }
 
+// HOURLY_DATA dan DAILY_DATA tetap menggunakan data mock yang sudah ada.
+
 export function VehicleChartCard({
+  basements,
   data,
 }: VehicleChartCardProps) {
   const [period, setPeriod] = useState<Period>("hourly")
+  const [selectedBasement, setSelectedBasement] = useState("building")
 
-  const chartData = useMemo(
-    () =>
-      period === "hourly"
-        ? data?.hourly ?? HOURLY_DATA
-        : data?.daily ?? DAILY_DATA,
-    [period, data]
-  )
+  const chartData = useMemo(() => {
+    // Seluruh gedung
+    if (selectedBasement === "building") {
+      if (period === "hourly") {
+        return data?.hourly ?? HOURLY_DATA
+      }
+
+      return data?.daily ?? DAILY_DATA
+    }
+
+    // Basement tertentu
+    const basementData = data?.byBasement?.[selectedBasement]
+
+    if (period === "hourly") {
+      return basementData?.hourly ?? []
+    }
+
+    return basementData?.daily ?? []
+  }, [data, period, selectedBasement])
+
+  const selectedBasementName =
+    selectedBasement === "building"
+      ? "Seluruh Gedung"
+      : basements.find((item) => item.id === selectedBasement)?.name ??
+        "Basement"
 
   return (
     <Card className="border-slate-200 bg-white shadow-sm">
-      <CardHeader className="flex flex-row items-start justify-between gap-3">
+      <CardHeader className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
         <div className="space-y-1">
           <CardTitle className="text-lg font-bold text-[#202B40]">
             Analisis Kendaraan
           </CardTitle>
+
+          <CardDescription>
+            Statistik kendaraan {selectedBasementName.toLowerCase()}
+          </CardDescription>
         </div>
 
-        <Select
-          value={period}
-          onValueChange={(value) => setPeriod(value as Period)}
-        >
-          <SelectTrigger className="w-[125px]">
-            <SelectValue placeholder="Pilih periode" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hourly">Per Jam</SelectItem>
-            <SelectItem value="daily">Per Hari</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap gap-2">
+          {/* Filter Basement */}
+          <Select
+            value={selectedBasement}
+           onValueChange={(value) => {
+              if (value !== null) {
+                setSelectedBasement(value)
+              }
+            }}
+          >
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Pilih basement" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="building">
+                Seluruh Gedung
+              </SelectItem>
+
+              {basements.map((basement) => (
+                <SelectItem key={basement.id} value={basement.id}>
+                  {basement.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Filter Periode */}
+          <Select
+            value={period}
+            onValueChange={(value) => {
+              if (value === "hourly" || value === "daily") {
+                setPeriod(value)
+              }
+            }}
+          >
+            <SelectTrigger className="w-[125px]">
+              <SelectValue placeholder="Pilih periode" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="hourly">Per Jam</SelectItem>
+              <SelectItem value="daily">Per Hari</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
 
       <CardContent>
@@ -124,7 +168,7 @@ export function VehicleChartCard({
 
           <span className="flex items-center gap-2 text-slate-600">
             <span className="size-2.5 rounded-full bg-emerald-500" />
-            Total
+            Total Kendaraan
           </span>
 
           <span className="flex items-center gap-2 text-slate-600">
@@ -134,86 +178,94 @@ export function VehicleChartCard({
         </div>
 
         <div className="h-[320px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{
-                top: 10,
-                right: 15,
-                left: -15,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#E2E8F0"
-              />
-
-              <XAxis
-                dataKey="time"
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "#64748B", fontSize: 12 }}
-                interval={0}
-              />
-
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "#64748B", fontSize: 12 }}
-                allowDecimals={false}
-              />
-
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "10px",
-                  border: "1px solid #E2E8F0",
-                  fontSize: "12px",
+          {chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={chartData}
+                margin={{
+                  top: 10,
+                  right: 15,
+                  left: -15,
+                  bottom: 5,
                 }}
-              />
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#E2E8F0"
+                />
 
-              <Line
-                type="monotone"
-                dataKey="in"
-                name="IN"
-                stroke="#3B82F6"
-                strokeWidth={2.5}
-                dot={false}
-                activeDot={{ r: 5 }}
-              />
+                <XAxis
+                  dataKey="time"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "#64748B", fontSize: 12 }}
+                  interval={0}
+                />
 
-              <Line
-                type="monotone"
-                dataKey="out"
-                name="OUT"
-                stroke="#F97316"
-                strokeWidth={2.5}
-                dot={false}
-                activeDot={{ r: 5 }}
-              />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "#64748B", fontSize: 12 }}
+                  allowDecimals={false}
+                />
 
-              <Line
-                type="monotone"
-                dataKey="total"
-                name="Total Kendaraan"
-                stroke="#10B981"
-                strokeWidth={2.5}
-                dot={false}
-                activeDot={{ r: 5 }}
-              />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "10px",
+                    border: "1px solid #E2E8F0",
+                    fontSize: "12px",
+                  }}
+                />
 
-              <Line
-                type="monotone"
-                dataKey="capacity"
-                name="Kapasitas Gedung"
-                stroke="#EF4444"
-                strokeWidth={2}
-                strokeDasharray="6 4"
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+                <Line
+                  type="monotone"
+                  dataKey="in"
+                  name="IN"
+                  stroke="#3B82F6"
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                />
+
+                <Line
+                  type="monotone"
+                  dataKey="out"
+                  name="OUT"
+                  stroke="#F97316"
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                />
+
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  name="Total Kendaraan"
+                  stroke="#10B981"
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                />
+
+                <Line
+                  type="monotone"
+                  dataKey="capacity"
+                  name="Kapasitas"
+                  stroke="#EF4444"
+                  strokeWidth={2}
+                  strokeDasharray="6 4"
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-200">
+              <p className="text-sm text-slate-500">
+                Belum ada data kendaraan untuk {selectedBasementName}.
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
